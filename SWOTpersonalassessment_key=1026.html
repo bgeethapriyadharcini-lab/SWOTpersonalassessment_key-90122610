@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Motivational Thought</title>
+
+<style>
+/* Body & Background */
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #0f0f0f, #1c1c1c, #000000);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
+    overflow: hidden;
+    color: white;
+}
+
+/* Soft animated glow in background */
+body::before {
+    content: "";
+    position: fixed;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(255,77,109,0.2), transparent 70%);
+    top: -200px;
+    left: -200px;
+    animation: moveGlow 10s infinite alternate ease-in-out;
+}
+
+@keyframes moveGlow {
+    0% { transform: translate(0,0); }
+    100% { transform: translate(200px,200px); }
+}
+
+/* Container with glass effect */
+.container {
+    width: 90%;
+    max-width: 600px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: 0 0 40px rgba(255,77,109,0.2);
+    margin: 10px;
+}
+
+.hidden { display: none; }
+
+/* Buttons */
+button {
+    padding: 12px 25px;
+    margin-top: 20px;
+    border: none;
+    border-radius: 25px;
+    background: linear-gradient(45deg, #ff4d6d, #ff1e56);
+    color: white;
+    cursor: pointer;
+    font-size: 15px;
+    transition: 0.3s ease;
+}
+
+button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px #ff4d6d;
+}
+
+/* Textarea */
+textarea {
+    width: 100%;
+    padding: 12px;
+    margin-top: 15px;
+    border-radius: 10px;
+    border: none;
+    resize: none;
+    background: rgba(255,255,255,0.08);
+    color: white;
+}
+
+/* Bottom start button */
+.bottom-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    display: none;
+}
+
+/* Fade in/out text animation */
+.fadeText {
+    animation: fadeinout 4s ease forwards;
+}
+
+@keyframes fadeinout {
+    0% {opacity: 0;}
+    50% {opacity: 1;}
+    100% {opacity: 0;}
+}
+
+/* Floating hearts */
+.heart {
+    position: fixed;
+    color: pink;
+    font-size: 20px;
+    animation: float 6s linear infinite;
+}
+
+@keyframes float {
+    from {transform: translateY(100vh);}
+    to {transform: translateY(-10vh);}
+}
+
+/* Image fade in */
+img {
+    width: 260px;
+    border-radius: 15px;
+    margin-top: 20px;
+    opacity: 0;
+    transition: opacity 4s ease;
+}
+
+/* Final message fade in */
+.fadeInText {
+    opacity: 0;
+    animation: fadeIn 4s forwards;
+}
+
+@keyframes fadeIn {
+    0% {opacity: 0;}
+    100% {opacity: 1;}
+}
+</style>
+</head>
+
+<body>
+
+<!-- MAIN SCREEN -->
+<div class="container" id="mainScreen">
+    <h2>"Answer wholeheartedly to know your strengths and weaknesses"</h2>
+</div>
+
+<!-- START BUTTON -->
+<button class="bottom-btn" id="startBtn">Click here if you want to see your future</button>
+
+<!-- QUESTIONS SCREEN -->
+<div class="container hidden" id="questionScreen">
+    <h3 id="questionText"></h3>
+    <textarea id="answerBox" rows="4" placeholder="Answer honestly from your heart..."></textarea>
+    <button onclick="nextQuestion()">Next</button>
+</div>
+
+<!-- VALENTINE SCREEN -->
+<div class="container hidden" id="valentineScreen">
+    <h2>Will you be my Valentine, Adarsh? ❤️</h2>
+    <button onclick="nextStep()">Yes</button>
+    <button onclick="alertNo()">No</button>
+</div>
+
+<!-- FINAL SCREEN -->
+<div class="container hidden" id="finalScreen">
+    <h2 id="finalMessage" class="fadeInText">Happy Valentine's Day, Adarsh ❤️</h2>
+    <img src="yourpic.jpg" id="couplePhoto">
+    <div id="finalAnswers" class="hidden"></div>
+</div>
+
+<!-- AUDIO -->
+<audio id="loveAudio" src="yourmusic.mp3"></audio>
+
+<script>
+// Show start button after 3s
+setTimeout(() => {
+    document.getElementById("startBtn").style.display = "block";
+}, 3000);
+
+// Questions
+let questions = [
+"What is your ambition?",
+"What do you think will be your greatest achievement?",
+"What is your unforgettable day in life? Why?",
+"Which is the most precious moment in your life?",
+"What are your strengths?",
+"What are your weaknesses?",
+"How will you improve yourself in next 2 years?",
+"Who is the love of your life?"
+];
+
+let currentQuestion = 0;
+let answers = [];
+
+// Typing effect
+function typeWriter(text, element, speed = 40) {
+    element.innerHTML = "";
+    let i = 0;
+    let interval = setInterval(() => {
+        if (i < text.length) {
+            element.innerHTML += text.charAt(i);
+            i++;
+        } else {
+            clearInterval(interval);
+        }
+    }, speed);
+}
+
+// Start Questions
+document.getElementById("startBtn").addEventListener("click", () => {
+    document.getElementById("mainScreen").classList.add("hidden");
+    document.getElementById("startBtn").style.display = "none";
+    document.getElementById("questionScreen").classList.remove("hidden");
+
+    typeWriter(questions[currentQuestion], document.getElementById("questionText"));
+});
+
+// Next question
+function nextQuestion() {
+    let answer = document.getElementById("answerBox").value.trim();
+    if(answer === "") return;
+
+    answers.push(answer);
+    document.getElementById("answerBox").value = "";
+    currentQuestion++;
+
+    if(currentQuestion < questions.length) {
+        typeWriter(questions[currentQuestion], document.getElementById("questionText"));
+    } else {
+        document.getElementById("questionScreen").classList.add("hidden");
+
+        // Check last answer for love name
+        let loveAnswer = answers[answers.length - 1].toLowerCase();
+        if(loveAnswer.includes("geetha") || loveAnswer.includes("geethu") || loveAnswer.includes("priya")) {
+            // Play audio only now
+            document.getElementById("loveAudio").play();
+        }
+
+        document.getElementById("valentineScreen").classList.remove("hidden");
+    }
+}
+
+// Valentine screen yes
+function nextStep() {
+    document.getElementById("valentineScreen").classList.add("hidden");
+    showFinal();
+}
+
+// Valentine screen no
+function alertNo() {
+    alert("Then love me more, express me more, and choose me every day ❤️");
+}
+
+// Final screen
+function showFinal() {
+    const finalScreen = document.getElementById("finalScreen");
+    const img = document.getElementById("couplePhoto");
+    const message = document.getElementById("finalMessage");
+    const answersDiv = document.getElementById("finalAnswers");
+
+    finalScreen.classList.remove("hidden");
+
+    // Fade in text and image
+    setTimeout(() => {
+        message.style.opacity = "1";
+        img.style.opacity = "1";
+    }, 500);
+
+    // Show all answers after fade-in (4s)
+    setTimeout(() => {
+        answersDiv.classList.remove("hidden");
+        answersDiv.innerHTML = "<h3>Your Reflection ❤️</h3>";
+        answers.forEach((ans, i) => {
+            answersDiv.innerHTML += "<p><b>" + questions[i] + "</b><br>" + ans + "</p><hr>";
+        });
+    }, 4500);
+
+    createHearts();
+}
+
+// Floating hearts
+function createHearts() {
+    setInterval(() => {
+        let heart = document.createElement("div");
+        heart.className = "heart";
+        heart.innerHTML = "❤️";
+        heart.style.left = Math.random() * 100 + "vw";
+        document.body.appendChild(heart);
+        setTimeout(() => { heart.remove(); }, 6000);
+    }, 800);
+}
+</script>
+
+</body>
+</html>
